@@ -1,5 +1,14 @@
 # Zyntrip Core
 
+![Zyntrip Core hero](docs/assets/hero-banner.svg)
+
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=06141B)](https://react.dev/)
+[![NestJS](https://img.shields.io/badge/NestJS-Backend-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![PayPal](https://img.shields.io/badge/PayPal-Checkout-003087?style=for-the-badge&logo=paypal&logoColor=white)](https://developer.paypal.com/)
+[![Socket.IO](https://img.shields.io/badge/Socket.IO-Realtime-010101?style=for-the-badge&logo=socketdotio&logoColor=white)](https://socket.io/)
+[![Supabase](https://img.shields.io/badge/Supabase-Ready-3ECF8E?style=for-the-badge&logo=supabase&logoColor=04130C)](https://supabase.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
 Zyntrip Core is a full-stack ride operations platform built in public for riders, drivers, dispatch teams, and finance operators.
 
 It combines a React frontend, a NestJS backend, PayPal checkout, and Socket.IO realtime flows so the product can move beyond static dashboards into live trip and payment operations.
@@ -24,6 +33,16 @@ This repository is the product core for a modern mobility stack:
 - persistence layer ready for Supabase/Postgres
 
 The goal is to ship an opinionated, production-minded base that can grow into a serious transportation or field-operations platform.
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/rider-dashboard.png" alt="Rider dashboard" width="31%" />
+  <img src="docs/screenshots/dispatch-board.png" alt="Dispatch board" width="31%" />
+  <img src="docs/screenshots/payments-console.png" alt="Payments console" width="31%" />
+</p>
+
+Local captures from the current build showing the rider flow, dispatch view, and payments console.
 
 ## Stack
 

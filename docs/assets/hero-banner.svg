@@ -1,0 +1,58 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="40" x2="1180" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1220"/>
+      <stop offset="0.55" stop-color="#10203E"/>
+      <stop offset="1" stop-color="#1E5EFF"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#F8FBFF" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#DDE9FF" stop-opacity="0.9"/>
+    </linearGradient>
+    <filter id="blur" x="0" y="0" width="1280" height="640" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="50"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="640" rx="36" fill="url(#bg)"/>
+  <g filter="url(#blur)" opacity="0.28">
+    <circle cx="1060" cy="120" r="140" fill="#8FD3FF"/>
+    <circle cx="220" cy="540" r="180" fill="#3C82FF"/>
+    <circle cx="880" cy="520" r="120" fill="#FFFFFF"/>
+  </g>
+
+  <rect x="56" y="56" width="1168" height="528" rx="28" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.12"/>
+
+  <g>
+    <rect x="100" y="108" width="138" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.12"/>
+    <text x="124" y="134" fill="#DCE9FF" font-family="'Segoe UI', sans-serif" font-size="18" font-weight="600">ZYNTRIP-CORE</text>
+  </g>
+
+  <text x="100" y="238" fill="white" font-family="'Segoe UI', sans-serif" font-size="72" font-weight="800">Realtime mobility ops.</text>
+  <text x="100" y="314" fill="white" font-family="'Segoe UI', sans-serif" font-size="72" font-weight="800">Payments, dispatch, and</text>
+  <text x="100" y="390" fill="white" font-family="'Segoe UI', sans-serif" font-size="72" font-weight="800">driver workflows in one stack.</text>
+
+  <text x="102" y="452" fill="#D4E2FF" font-family="'Segoe UI', sans-serif" font-size="28" font-weight="500">
+    React + NestJS + PayPal + Socket.IO + Supabase-ready persistence
+  </text>
+
+  <g transform="translate(760 126)">
+    <rect width="394" height="170" rx="26" fill="url(#panel)"/>
+    <text x="28" y="40" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="18" font-weight="700">Dispatch snapshot</text>
+    <rect x="28" y="62" width="338" height="48" rx="14" fill="#E9F1FF"/>
+    <text x="46" y="92" fill="#0F172A" font-family="'Segoe UI', sans-serif" font-size="21" font-weight="700">Downtown Hub → Riverside Park</text>
+    <text x="46" y="136" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="18">Fare $14.20 · Payment pending · Requested</text>
+    <rect x="282" y="126" width="84" height="26" rx="13" fill="#DBEAFE"/>
+    <text x="302" y="144" fill="#1D4ED8" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="700">LIVE</text>
+  </g>
+
+  <g transform="translate(760 332)">
+    <rect width="394" height="170" rx="26" fill="#0F172A" fill-opacity="0.88" stroke="#93C5FD" stroke-opacity="0.22"/>
+    <text x="28" y="40" fill="#E2E8F0" font-family="'Segoe UI', sans-serif" font-size="18" font-weight="700">Payments + alerts</text>
+    <text x="28" y="82" fill="white" font-family="'Segoe UI', sans-serif" font-size="34" font-weight="800">$0.00</text>
+    <text x="28" y="112" fill="#A5B4FC" font-family="'Segoe UI', sans-serif" font-size="16">Collected through PayPal</text>
+    <rect x="28" y="130" width="150" height="20" rx="10" fill="#1D4ED8"/>
+    <rect x="184" y="130" width="78" height="20" rx="10" fill="#1E293B"/>
+    <rect x="268" y="130" width="98" height="20" rx="10" fill="#0EA5E9"/>
+  </g>
+</svg>
