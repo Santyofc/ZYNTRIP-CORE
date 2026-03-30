@@ -1,0 +1,66 @@
+:root {
+  color-scheme: light;
+  --bg: #eef4ff;
+  --panel: rgba(255, 255, 255, 0.88);
+  --ink: #0f172a;
+  --muted: #475569;
+  --accent: #1e5eff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(30, 94, 255, 0.14), transparent 35%),
+    linear-gradient(180deg, #f7faff 0%, var(--bg) 100%);
+  color: var(--ink);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.admin-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 48px 24px;
+}
+
+.hero-card {
+  width: min(760px, 100%);
+  padding: 40px;
+  border-radius: 28px;
+  background: var(--panel);
+  box-shadow: 0 18px 48px rgba(30, 41, 59, 0.12);
+  backdrop-filter: blur(14px);
+}
+
+.hero-card h1 {
+  margin: 0 0 12px;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1;
+}
+
+.hero-card p,
+.hero-card li {
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.hero-card ul {
+  margin: 20px 0 0;
+  padding-left: 22px;
+}
+
+.eyebrow {
+  margin: 0 0 14px;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}

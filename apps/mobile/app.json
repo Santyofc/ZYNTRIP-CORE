@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Zyntrip Mobile",
+    "slug": "zyntrip-mobile",
+    "scheme": "zyntrip",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}

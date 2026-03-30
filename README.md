@@ -52,6 +52,7 @@ The target production stack is documented here:
 
 - [Architecture Blueprint](docs/architecture-blueprint.md)
 - [DB Schema v2](docs/db-schema-v2.sql)
+- [Monorepo Migration Plan](docs/monorepo-migration.md)
 
 ## Stack
 

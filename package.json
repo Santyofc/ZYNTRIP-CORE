@@ -3,13 +3,18 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "packageManager": "pnpm@10.6.0",
   "scripts": {
     "dev": "vite",
     "dev:frontend": "vite",
     "dev:backend": "npm --prefix backend run start:dev",
+    "dev:admin:workspace": "pnpm --filter @zyntrip/admin dev",
+    "dev:mobile:workspace": "pnpm --filter @zyntrip/mobile start",
+    "dev:api:workspace": "pnpm --filter @zyntrip/api start:dev",
     "build": "vite build",
     "build:frontend": "vite build",
     "build:backend": "npm --prefix backend run build",
+    "build:workspaces": "pnpm turbo run build",
     "preview": "vite preview"
   },
   "dependencies": {
