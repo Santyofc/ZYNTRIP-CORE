@@ -31,6 +31,9 @@ export function TripTimeline({ title, filter }: TripTimelineProps) {
               <div>
                 <p className="trip-price">{formatCurrency(trip.fareEstimate)}</p>
                 <p className="badge">{toTitleCase(trip.status.replace('_', ' '))}</p>
+                <p className={`payment-badge payment-${trip.paymentStatus}`}>
+                  Payment {toTitleCase(trip.paymentStatus)}
+                </p>
               </div>
             </li>
           ))}

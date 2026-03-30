@@ -1,6 +1,8 @@
 # Zyntrip Core
 
-Zyntrip Core is the frontend foundation of Zyntrip, a ride-hailing SaaS platform for riders, drivers, dispatch teams, finance operations, and administrators.
+Zyntrip Core is a ride-hailing platform built in public for operators, riders, drivers, and finance teams.
+
+It is designed as a practical full-stack product: a React frontend for daily operations, a NestJS backend for business logic, and Supabase-ready persistence for realtime trips, payments, and notifications.
 
 ## Stack
 
@@ -8,6 +10,7 @@ Zyntrip Core is the frontend foundation of Zyntrip, a ride-hailing SaaS platform
 - TypeScript
 - Vite 6
 - React Router DOM
+- Socket.IO client
 - CSS tokens with modular feature architecture
 
 ## Product Modules
@@ -22,6 +25,16 @@ Zyntrip Core is the frontend foundation of Zyntrip, a ride-hailing SaaS platform
 ## Project Structure
 
 ```text
+backend/
+  src/
+    auth/
+    health/
+    notifications/
+    payments/
+    realtime/
+    trips/
+    app.module.ts
+    main.ts
 src/
   app/
     providers/
@@ -59,11 +72,79 @@ npm install
 npm run dev
 ```
 
-3. Build production assets:
+3. Start the backend API:
+
+```bash
+npm run dev:backend
+```
+
+4. Build production assets:
 
 ```bash
 npm run build
 ```
+
+5. Build the backend:
+
+```bash
+npm run build:backend
+```
+
+## PayPal Setup
+
+This project includes a base PayPal Checkout integration for ride payments.
+
+1. Copy `.env.example` values into your local environment.
+2. Set `VITE_PAYPAL_CLIENT_ID` with the sandbox or live client ID from your PayPal app.
+3. Start the app and create a ride from the rider dashboard to test the checkout flow.
+
+Current integration scope:
+
+- PayPal JavaScript SDK for client-side checkout buttons
+- Ride payment capture flow on the rider dashboard
+- Paid/pending/failed payment state reflected in the trips store
+- Payments overview page wired to PayPal-driven trip totals
+- In-app operations inbox plus browser notifications for approved payments
+- Socket.IO live sync for trips, payment state, and operations alerts
+
+Production hardening still recommended:
+
+- server-side order creation and capture verification
+- webhook listener for payment reconciliation
+- outbound notification fan-out to email, Telegram, or Slack from the webhook handler
+- secure secret storage outside the frontend
+
+## Backend API
+
+The repo now includes a NestJS backend scaffold in `backend/` so the frontend can move off in-memory mocks without leaving this project structure.
+
+Included modules:
+
+- `health`: readiness check at `GET /api/health`
+- `auth`: starter endpoints for `POST /api/auth/register` and `POST /api/auth/login`
+- `trips`: starter endpoints for `GET /api/trips`, `POST /api/trips`, and `PATCH /api/trips/:tripId/payment/paid`
+- `realtime`: Socket.IO gateway for `trip.created`, `trip.updated`, and `notification.created`
+- `payments`: starter endpoints for `POST /api/payments/paypal/orders` and `POST /api/payments/paypal/webhook`
+- `notifications`: server-side handoff point for Telegram, email, or Slack alerts
+
+Environment variables for the backend live in `backend/.env.example`.
+
+Current backend scope:
+
+- NestJS API shell with validation and CORS
+- Supabase server client with safe in-memory fallback when credentials are missing
+- starter Postgres schema in `backend/supabase/migrations/001_initial_schema.sql`
+- PayPal order and webhook stubs in the correct backend layer
+- notification fan-out stub that can be wired to Telegram or email next
+- live trip and notification fan-out over Socket.IO for the frontend
+
+To enable Supabase persistence:
+
+1. Create a Supabase project.
+2. Apply `backend/supabase/migrations/001_initial_schema.sql` in the SQL editor.
+3. Copy `backend/.env.example` to `backend/.env`.
+4. Fill `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
+5. Restart `npm run dev:backend`.
 
 ## Backend Readiness and Suggested Architecture
 
@@ -76,7 +157,6 @@ npm run build
 
 ## Roadmap
 
-- Real-time trip tracking via WebSockets
 - Geospatial search and ETA estimation
 - Dynamic pricing and surge zones
 - Driver onboarding workflow and compliance checks

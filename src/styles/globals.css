@@ -41,6 +41,32 @@ a {
   margin-bottom: 1rem;
 }
 
+.app-header-status {
+  padding: 0.65rem 0.8rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.8);
+  min-width: 120px;
+}
+
+.header-status-label,
+.header-status-value {
+  margin: 0;
+}
+
+.header-status-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.header-status-value {
+  margin-top: 0.2rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
 .app-brand {
   margin: 0;
   font-size: 1.35rem;
@@ -78,6 +104,110 @@ a {
 .app-main {
   display: grid;
   gap: 1rem;
+}
+
+.notifications-panel {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(234, 242, 255, 0.94));
+  box-shadow: var(--shadow);
+}
+
+.notifications-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.notifications-eyebrow,
+.notifications-title {
+  margin: 0;
+}
+
+.notifications-eyebrow {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+}
+
+.notifications-title {
+  margin-top: 0.25rem;
+  font-size: 1.1rem;
+}
+
+.notifications-clear {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.55rem 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.notifications-clear:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.notifications-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.notification-item-unread {
+  border-color: rgba(10, 102, 255, 0.4);
+  background: rgba(220, 234, 255, 0.7);
+}
+
+.notification-copy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.notification-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.notification-meta {
+  display: grid;
+  justify-items: end;
+  align-content: start;
+  gap: 0.35rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.notification-channel {
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 0.18rem 0.45rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.notification-time {
+  white-space: nowrap;
 }
 
 .auth-layout {
@@ -231,6 +361,45 @@ a {
   font-weight: 600;
 }
 
+.checkout-panel {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.paypal-checkout {
+  min-height: 42px;
+}
+
+.paypal-state {
+  margin: 0;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  font-size: 0.92rem;
+}
+
+.paypal-state-warning {
+  color: #8a5a00;
+  background: #fff4da;
+  border-color: #f0d59a;
+}
+
+.paypal-state-error {
+  color: var(--danger);
+  background: #fff0f0;
+  border-color: #f3c4c4;
+}
+
+.paypal-state-success {
+  color: var(--success);
+  background: #eafaf3;
+  border-color: #bce8d1;
+}
+
 .badge {
   margin: 0.25rem 0 0;
   font-size: 0.8rem;
@@ -239,6 +408,25 @@ a {
   padding: 0.2rem 0.45rem;
   border-radius: 999px;
   text-align: center;
+}
+
+.payment-badge {
+  margin: 0.3rem 0 0;
+  font-size: 0.78rem;
+  text-align: right;
+  font-weight: 600;
+}
+
+.payment-paid {
+  color: var(--success);
+}
+
+.payment-pending {
+  color: #8a5a00;
+}
+
+.payment-failed {
+  color: var(--danger);
 }
 
 .actions {
@@ -265,5 +453,19 @@ a {
 
   .app-header {
     flex-direction: column;
+  }
+
+  .notifications-header,
+  .notification-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .notification-item {
+    gap: 0.65rem;
+  }
+
+  .notification-meta {
+    justify-items: start;
   }
 }

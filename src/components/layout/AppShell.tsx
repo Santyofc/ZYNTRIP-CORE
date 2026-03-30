@@ -1,5 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import type { PropsWithChildren } from 'react';
+import { useNotificationsStore } from '@/app/providers/NotificationsProvider';
+import { NotificationsInbox } from '@/features/notifications/components/NotificationsInbox';
 import { APP_NAME, ROUTES } from '@/lib/constants';
 
 const navItems = [
@@ -11,12 +13,18 @@ const navItems = [
 ];
 
 export function AppShell({ children }: PropsWithChildren) {
+  const { unreadCount } = useNotificationsStore();
+
   return (
     <div className="app-shell">
       <header className="app-header">
         <div>
           <p className="app-brand">{APP_NAME}</p>
           <p className="app-subtitle">Mobility Platform Console</p>
+        </div>
+        <div className="app-header-status">
+          <p className="header-status-label">Ops inbox</p>
+          <p className="header-status-value">{unreadCount} unread</p>
         </div>
         <nav className="app-nav">
           {navItems.map((item) => (
@@ -30,6 +38,7 @@ export function AppShell({ children }: PropsWithChildren) {
           ))}
         </nav>
       </header>
+      <NotificationsInbox />
       <main className="app-main">{children}</main>
     </div>
   );

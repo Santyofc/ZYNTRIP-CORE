@@ -1,6 +1,7 @@
 export type TripStatus = 'requested' | 'accepted' | 'in_progress' | 'completed' | 'cancelled';
+export type PaymentStatus = 'pending' | 'paid' | 'failed';
 
-export interface Trip {
+export interface TripEntity {
   id: string;
   riderName: string;
   pickup: string;
@@ -8,9 +9,9 @@ export interface Trip {
   fareEstimate: number;
   requestedAt: string;
   status: TripStatus;
-  paymentStatus: 'pending' | 'paid' | 'failed';
+  paymentStatus: PaymentStatus;
+  assignedDriverId?: string;
   paypalOrderId?: string;
   paypalCaptureId?: string;
   paidAt?: string;
-  assignedDriverId?: string;
 }

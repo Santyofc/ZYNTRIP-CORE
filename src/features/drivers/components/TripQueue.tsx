@@ -27,19 +27,19 @@ export function TripQueue() {
             <div className="actions">
               {trip.status === 'requested' ? (
                 <>
-                  <Button onClick={() => acceptTrip(trip.id, 'driver-session')}>Accept</Button>
-                  <Button variant="ghost" onClick={() => rejectTrip(trip.id)}>
+                  <Button onClick={() => void acceptTrip(trip.id, 'driver-session')}>Accept</Button>
+                  <Button variant="ghost" onClick={() => void rejectTrip(trip.id)}>
                     Decline
                   </Button>
                 </>
               ) : null}
               {trip.status === 'accepted' ? (
-                <Button variant="secondary" onClick={() => startTrip(trip.id)}>
+                <Button variant="secondary" onClick={() => void startTrip(trip.id)}>
                   Start trip
                 </Button>
               ) : null}
               {trip.status === 'in_progress' ? (
-                <Button variant="secondary" onClick={() => completeTrip(trip.id)}>
+                <Button variant="secondary" onClick={() => void completeTrip(trip.id)}>
                   Complete
                 </Button>
               ) : null}

@@ -8,9 +8,12 @@ export interface RideRequestPayload {
 
 export interface TripsStoreValue {
   trips: Trip[];
-  requestTrip: (payload: RideRequestPayload) => Trip;
-  acceptTrip: (tripId: string, driverId: string) => void;
-  rejectTrip: (tripId: string) => void;
-  startTrip: (tripId: string) => void;
-  completeTrip: (tripId: string) => void;
+  isSyncing: boolean;
+  requestTrip: (payload: RideRequestPayload) => Promise<Trip>;
+  markTripPaid: (tripId: string, payment: { orderId: string; captureId?: string }) => Promise<void>;
+  markTripPaymentFailed: (tripId: string) => void;
+  acceptTrip: (tripId: string, driverId: string) => Promise<void>;
+  rejectTrip: (tripId: string) => Promise<void>;
+  startTrip: (tripId: string) => Promise<void>;
+  completeTrip: (tripId: string) => Promise<void>;
 }
