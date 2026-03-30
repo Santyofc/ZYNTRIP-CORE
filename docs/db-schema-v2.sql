@@ -19,13 +19,16 @@ BEGIN
     WHERE typname = 'trip_status'
   ) THEN
     CREATE TYPE trip_status AS ENUM (
-      'requested',
-      'assigned',
-      'driver_en_route',
-      'driver_arrived',
-      'in_progress',
-      'completed',
-      'cancelled'
+      'REQUESTED',
+      'SEARCHING_DRIVER',
+      'DRIVER_ASSIGNED',
+      'DRIVER_EN_ROUTE',
+      'ARRIVED',
+      'IN_PROGRESS',
+      'COMPLETED',
+      'CANCELLED',
+      'PAYMENT_PENDING',
+      'PAID'
     );
   END IF;
 
@@ -68,40 +71,21 @@ CREATE TABLE IF NOT EXISTS profiles (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE IF NOT EXISTS riders (
-  user_id uuid PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-  emergency_contact_name text,
-  emergency_contact_phone text,
-  default_payment_provider text,
-  notes text,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
-
 CREATE TABLE IF NOT EXISTS vehicles (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  make text NOT NULL,
+  driver_id uuid,
+  make text,
   model text NOT NULL,
   color text,
-  plate_number text NOT NULL UNIQUE,
-  capacity smallint NOT NULL DEFAULT 4,
-  year integer,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
+  plate_number text NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS drivers (
-  user_id uuid PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-  vehicle_id uuid REFERENCES vehicles(id) ON DELETE SET NULL,
-  license_number text,
-  availability driver_availability NOT NULL DEFAULT 'offline',
-  current_latitude double precision,
-  current_longitude double precision,
-  last_location_at timestamptz,
-  rating numeric(3,2),
-  notes text,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  status text NOT NULL DEFAULT 'OFFLINE',
+  lat double precision,
+  lng double precision
 );
 
 CREATE TABLE IF NOT EXISTS driver_documents (
@@ -116,97 +100,32 @@ CREATE TABLE IF NOT EXISTS driver_documents (
 
 CREATE TABLE IF NOT EXISTS trips (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  rider_user_id uuid NOT NULL REFERENCES riders(user_id) ON DELETE RESTRICT,
-  driver_user_id uuid REFERENCES drivers(user_id) ON DELETE SET NULL,
-  status trip_status NOT NULL DEFAULT 'requested',
-  pickup_label text NOT NULL,
-  pickup_latitude double precision,
-  pickup_longitude double precision,
-  destination_label text NOT NULL,
-  destination_latitude double precision,
-  destination_longitude double precision,
-  distance_meters integer,
-  duration_seconds integer,
-  fare_estimate numeric(12,2) NOT NULL DEFAULT 0,
-  fare_final numeric(12,2),
-  requested_at timestamptz NOT NULL DEFAULT now(),
-  assigned_at timestamptz,
-  started_at timestamptz,
-  completed_at timestamptz,
-  cancelled_at timestamptz,
-  cancel_reason text,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS trip_stops (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  trip_id uuid NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
-  stop_order integer NOT NULL,
-  label text NOT NULL,
-  latitude double precision,
-  longitude double precision,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (trip_id, stop_order)
+  rider_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+  driver_id uuid REFERENCES drivers(id) ON DELETE SET NULL,
+  status trip_status NOT NULL DEFAULT 'REQUESTED',
+  origin_lat double precision,
+  origin_lng double precision,
+  dest_lat double precision,
+  dest_lng double precision,
+  fare numeric(12,2) NOT NULL DEFAULT 0,
+  created_at timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS trip_events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   trip_id uuid NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
-  event_type text NOT NULL,
-  actor_user_id uuid REFERENCES users(id) ON DELETE SET NULL,
-  payload jsonb NOT NULL DEFAULT '{}'::jsonb,
+  event text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS dispatch_assignments (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  trip_id uuid NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
-  driver_user_id uuid NOT NULL REFERENCES drivers(user_id) ON DELETE CASCADE,
-  assigned_by_user_id uuid REFERENCES users(id) ON DELETE SET NULL,
-  assignment_source text NOT NULL DEFAULT 'manual',
-  assigned_at timestamptz NOT NULL DEFAULT now(),
-  accepted_at timestamptz,
-  rejected_at timestamptz,
-  expires_at timestamptz,
-  UNIQUE (trip_id, driver_user_id, assigned_at)
 );
 
 CREATE TABLE IF NOT EXISTS payments (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   trip_id uuid REFERENCES trips(id) ON DELETE SET NULL,
-  rider_user_id uuid REFERENCES riders(user_id) ON DELETE SET NULL,
   provider text NOT NULL,
-  provider_order_id text UNIQUE,
-  provider_capture_id text UNIQUE,
   status payment_status NOT NULL DEFAULT 'pending',
   amount numeric(12,2) NOT NULL,
-  currency text NOT NULL DEFAULT 'USD',
-  raw_event jsonb,
-  paid_at timestamptz,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS refunds (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  payment_id uuid NOT NULL REFERENCES payments(id) ON DELETE CASCADE,
-  amount numeric(12,2) NOT NULL,
-  reason text,
-  provider_refund_id text UNIQUE,
+  currency text NOT NULL DEFAULT 'CRC',
   created_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS payouts (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  driver_user_id uuid NOT NULL REFERENCES drivers(user_id) ON DELETE CASCADE,
-  amount numeric(12,2) NOT NULL,
-  currency text NOT NULL DEFAULT 'USD',
-  status text NOT NULL DEFAULT 'pending',
-  provider text,
-  provider_payout_id text,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  processed_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS push_tokens (

@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateTripDto {
   @IsString()
@@ -9,4 +9,20 @@ export class CreateTripDto {
 
   @IsString()
   destination!: string;
+
+  @IsOptional()
+  @IsNumber()
+  pickupLat?: number;
+
+  @IsOptional()
+  @IsNumber()
+  pickupLng?: number;
+
+  @IsOptional()
+  @IsNumber()
+  destinationLat?: number;
+
+  @IsOptional()
+  @IsNumber()
+  destinationLng?: number;
 }

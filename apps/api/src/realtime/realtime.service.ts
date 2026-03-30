@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import type { TripEntity } from '../trips/entities/trip.entity';
+import type { DriverLocation } from '../drivers/drivers.service';
 import { RealtimeGateway } from './realtime.gateway';
 
 export interface RealtimeNotification {
@@ -27,5 +28,14 @@ export class RealtimeService {
 
   emitNotificationCreated(notification: RealtimeNotification) {
     this.gateway.server.emit('notification.created', notification);
+  }
+
+  emitDriverLocationUpdated(location: DriverLocation) {
+    this.gateway.server.emit('driver.location.updated', location);
+    this.gateway.server.to(`driver:${location.driverId}`).emit('driver.location.updated', location);
+  }
+
+  emitDriverOffer(driverId: string, payload: { tripId: string }) {
+    this.gateway.server.to(`driver:${driverId}`).emit('trip.offer', payload);
   }
 }

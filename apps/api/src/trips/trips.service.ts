@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { MatchingService } from '../matching/matching.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { RealtimeService } from '../realtime/realtime.service';
 import { SupabaseService } from '../supabase/supabase.service';
 import type { Database } from '../supabase/supabase.types';
 import { CreateTripDto } from './dto/create-trip.dto';
 import { TripEntity } from './entities/trip.entity';
+import { canTransitionTripStatus, toLegacyTripStatus, type TripStatus as DomainTripStatus } from './trip-state.machine';
 
 @Injectable()
 export class TripsService {
@@ -12,6 +14,7 @@ export class TripsService {
     private readonly supabaseService: SupabaseService,
     private readonly realtimeService: RealtimeService,
     private readonly notificationsService: NotificationsService,
+    private readonly matchingService: MatchingService,
   ) {}
 
   private readonly trips: TripEntity[] = [
@@ -52,6 +55,10 @@ export class TripsService {
       riderName: payload.riderName,
       pickup: payload.pickup,
       destination: payload.destination,
+      pickupLat: payload.pickupLat,
+      pickupLng: payload.pickupLng,
+      destinationLat: payload.destinationLat,
+      destinationLng: payload.destinationLng,
       fareEstimate: this.calculateFareEstimate(payload.pickup, payload.destination),
       requestedAt: new Date().toISOString(),
       status: 'requested',
@@ -85,11 +92,13 @@ export class TripsService {
       }
 
       const createdTrip = this.mapTripRow(data);
+      await this.tryAutoAssignDriver(createdTrip);
       this.realtimeService.emitTripCreated(createdTrip);
       return createdTrip;
     }
 
     this.trips.unshift(trip);
+    await this.tryAutoAssignDriver(trip);
     this.realtimeService.emitTripCreated(trip);
     return trip;
   }
@@ -191,9 +200,66 @@ export class TripsService {
     return trip;
   }
 
+  async transitionDomainStatus(tripId: string, nextStatus: DomainTripStatus, driverId?: string) {
+    const trip = await this.findById(tripId);
+    const currentStatus = this.toDomainTripStatus(trip);
+
+    if (!canTransitionTripStatus(currentStatus, nextStatus)) {
+      throw new Error(`Invalid transition from ${currentStatus} to ${nextStatus}`);
+    }
+
+    return this.updateStatus(tripId, toLegacyTripStatus(nextStatus), driverId);
+  }
+
   private calculateFareEstimate(pickup: string, destination: string) {
     const distanceSignal = Math.max(pickup.length + destination.length, 8);
     return Number((distanceSignal * 0.55).toFixed(2));
+  }
+
+  private async tryAutoAssignDriver(trip: TripEntity) {
+    const assignedDriverId = await this.matchingService.assignDriver({
+      id: trip.id,
+      pickupLat: trip.pickupLat,
+      pickupLng: trip.pickupLng,
+    });
+
+    if (!assignedDriverId) {
+      return;
+    }
+
+    trip.assignedDriverId = assignedDriverId;
+    trip.status = 'accepted';
+    this.realtimeService.emitTripUpdated(trip);
+  }
+
+  private async findById(tripId: string) {
+    const trips = await this.findAll();
+    const trip = trips.find((item: TripEntity) => item.id === tripId);
+
+    if (!trip) {
+      throw new NotFoundException(`Trip ${tripId} was not found.`);
+    }
+
+    return trip;
+  }
+
+  private toDomainTripStatus(trip: TripEntity): DomainTripStatus {
+    if (trip.paymentStatus === 'paid') {
+      return 'PAID';
+    }
+
+    switch (trip.status) {
+      case 'requested':
+        return trip.assignedDriverId ? 'DRIVER_ASSIGNED' : 'REQUESTED';
+      case 'accepted':
+        return 'DRIVER_EN_ROUTE';
+      case 'in_progress':
+        return 'IN_PROGRESS';
+      case 'completed':
+        return trip.paymentStatus === 'pending' ? 'PAYMENT_PENDING' : 'COMPLETED';
+      case 'cancelled':
+        return 'CANCELLED';
+    }
   }
 
   private mapTripRow(row: Database['public']['Tables']['trips']['Row']): TripEntity {
@@ -202,6 +268,10 @@ export class TripsService {
       riderName: row.rider_name,
       pickup: row.pickup,
       destination: row.destination,
+      pickupLat: undefined,
+      pickupLng: undefined,
+      destinationLat: undefined,
+      destinationLng: undefined,
       fareEstimate: Number(row.fare_estimate),
       requestedAt: row.requested_at,
       status: row.status,

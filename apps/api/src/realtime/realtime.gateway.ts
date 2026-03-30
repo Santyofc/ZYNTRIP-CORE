@@ -9,6 +9,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import type { Server, Socket } from 'socket.io';
+import { DriversService } from '../drivers/drivers.service';
 
 @WebSocketGateway({
   cors: {
@@ -17,6 +18,8 @@ import type { Server, Socket } from 'socket.io';
   },
 })
 export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  constructor(private readonly driversService: DriversService) {}
+
   @WebSocketServer()
   server!: Server;
 
@@ -38,5 +41,21 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     client.join(room);
     this.logger.log(`Socket ${client.id} joined room ${room}`);
+  }
+
+  @SubscribeMessage('driver:location')
+  handleDriverLocation(
+    @MessageBody() payload: { driverId: string; lat: number; lng: number; availability?: 'OFFLINE' | 'ONLINE' | 'BUSY' },
+  ) {
+    if (!payload?.driverId) {
+      return;
+    }
+
+    return this.driversService.updateLocation(
+      payload.driverId,
+      payload.lat,
+      payload.lng,
+      payload.availability ?? 'ONLINE',
+    );
   }
 }

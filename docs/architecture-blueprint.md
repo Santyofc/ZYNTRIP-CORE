@@ -2,6 +2,17 @@
 
 This document defines the target production stack for the next iteration of Zyntrip Core.
 
+## V1 Scope
+
+- Rider app: map, request trip, tracking, payment, rating
+- Driver app: online and offline, accept, navigation, complete
+- Automatic matching: proximity plus availability
+- Realtime: driver location plus trip status
+- Pricing: distance and time
+- Push notifications
+- Basic admin panel
+- Payments: cash first, Stripe or SINPE next
+
 ## Closed Stack
 
 - Mobile: React Native + Expo
@@ -20,9 +31,12 @@ This document defines the target production stack for the next iteration of Zynt
 
 ```text
 apps/
-  mobile/
-    app/
-    src/
+  rider-app/
+    App.tsx
+    app.json
+    package.json
+  driver-app/
+    App.tsx
     app.json
     package.json
   admin/
@@ -34,16 +48,13 @@ apps/
     src/
       auth/
       users/
-      riders/
       drivers/
-      vehicles/
       trips/
       dispatch/
+      matching/
       payments/
       notifications/
-      maps/
       realtime/
-      queue/
       health/
     test/
     package.json
@@ -84,14 +95,19 @@ docs/
 
 ## Responsibilities By App
 
-### `apps/mobile`
+### `apps/rider-app`
 
-- Rider app
-- Driver app
-- Authentication
-- Ride creation and trip tracking
-- Push notification registration
-- Live trip state via Socket.IO
+- Request trip
+- Track assigned driver
+- Pay and rate
+- Push notifications
+
+### `apps/driver-app`
+
+- Toggle online and offline
+- Receive and accept ride requests
+- Send live location every few seconds
+- Complete trip lifecycle
 
 ### `apps/admin`
 
@@ -106,8 +122,8 @@ docs/
 - Business logic
 - Auth and RBAC
 - Trip lifecycle orchestration
-- Dispatch workflows
-- PayPal integration and webhooks
+- Matching and dispatch workflows
+- Cash-first payments plus future Stripe or SINPE
 - Socket.IO realtime events
 - Redis-backed queues and geo helpers
 - FCM push fan-out
@@ -123,21 +139,17 @@ docs/
 
 - `auth`: login, refresh token, sessions, RBAC
 - `users`: platform users and profiles
-- `riders`: rider-specific preferences and history
 - `drivers`: availability, status, onboarding, compliance
-- `vehicles`: vehicle records and verification
 - `trips`: trip creation, assignment, state machine, receipts
-- `dispatch`: queueing, assignment logic, escalation
+- `matching`: proximity plus availability assignment
 - `payments`: orders, captures, refunds, payouts
 - `notifications`: app, push, email, Telegram hooks
-- `maps`: geocoding, route estimates, ETAs
 - `realtime`: Socket.IO gateway and room routing
-- `queue`: Redis jobs, retries, delayed work
 
 ## Recommended Shared Contracts
 
 - `UserRole`: `rider | driver | dispatcher | admin | finance`
-- `TripStatus`: `requested | assigned | driver_en_route | driver_arrived | in_progress | completed | cancelled`
+- `TripStatus`: `REQUESTED | SEARCHING_DRIVER | DRIVER_ASSIGNED | DRIVER_EN_ROUTE | ARRIVED | IN_PROGRESS | COMPLETED | CANCELLED | PAYMENT_PENDING | PAID`
 - `PaymentStatus`: `pending | authorized | paid | failed | refunded`
 - `DriverAvailability`: `offline | online | busy | paused`
 
@@ -154,6 +166,7 @@ docs/
 
 - `trip.created`
 - `trip.updated`
+- `trip.offer`
 - `trip.assigned`
 - `trip.cancelled`
 - `driver.location.updated`
@@ -195,33 +208,22 @@ docs/
 
 ### Phase 1
 
-- set up `pnpm` workspaces
-- create `apps/admin`, `apps/api`, `packages/db`, `packages/types`
-- move current NestJS scaffold into `apps/api`
-- move current frontend into `apps/admin` or replace with Next.js shell
+- monolithic modular backend plus realtime
+- rider and driver apps
+- admin app
+- Drizzle schema and migrations
 
 ### Phase 2
 
-- Drizzle schema and migrations
-- JWT auth
-- users, profiles, riders, drivers, vehicles
+- automatic matching
+- Redis geo plus queues
+- Google Maps routing and ETA
+- push notifications
 
 ### Phase 3
 
-- trip creation and dispatch
-- Socket.IO rooms and events
-- Redis queue integration
-
-### Phase 4
-
-- Google Maps routing and ETA
-- FCM push notifications
-- PayPal webhook hardening
-
-### Phase 5
-
 - production deploy on EC2 + Nginx + Cloudflare
-- logging, tracing, alerts, backups
+- payments expansion, observability, backups
 
 ## Notes
 

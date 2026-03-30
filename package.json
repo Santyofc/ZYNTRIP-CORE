@@ -11,6 +11,8 @@
     "dev:legacy-backend": "cd backend && npm run start:dev",
     "dev:admin:workspace": "pnpm --filter @zyntrip/admin dev",
     "dev:mobile:workspace": "pnpm --filter @zyntrip/mobile start",
+    "dev:rider:workspace": "pnpm --filter @zyntrip/rider-app start",
+    "dev:driver:workspace": "pnpm --filter @zyntrip/driver-app start",
     "dev:api:workspace": "pnpm --filter @zyntrip/api start:dev",
     "build": "vite build",
     "build:frontend": "vite build",
