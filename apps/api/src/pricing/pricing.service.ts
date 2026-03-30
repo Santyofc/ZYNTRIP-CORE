@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { MarketDynamicsService } from '../market-dynamics/market-dynamics.service';
 
 export interface FareEstimateInput {
   originLabel: string;
   destinationLabel: string;
+  region?: string;
   originLat?: number;
   originLng?: number;
   destinationLat?: number;
   destinationLng?: number;
   durationMinutes?: number;
+  activeRequests?: number;
+  availableDrivers?: number;
 }
 
 export interface FareEstimateBreakdown {
@@ -16,11 +20,15 @@ export interface FareEstimateBreakdown {
   baseFare: number;
   distanceFare: number;
   timeFare: number;
+  surgeMultiplier: number;
+  surgeFare: number;
   total: number;
 }
 
 @Injectable()
 export class PricingService {
+  constructor(private readonly marketDynamicsService: MarketDynamicsService) {}
+
   private readonly baseFare = 2.25;
   private readonly perKmRate = 0.85;
   private readonly perMinuteRate = 0.18;
@@ -30,6 +38,13 @@ export class PricingService {
     const durationMinutes = input.durationMinutes ?? Math.max(6, Math.round(distanceKm * 2.8));
     const distanceFare = distanceKm * this.perKmRate;
     const timeFare = durationMinutes * this.perMinuteRate;
+    const subtotal = this.baseFare + distanceFare + timeFare;
+    const market = this.marketDynamicsService.getSnapshot(
+      input.region ?? 'cr-south',
+      input.activeRequests ?? 1,
+      input.availableDrivers ?? 3,
+    );
+    const total = subtotal * market.surgeMultiplier;
 
     return {
       distanceKm: Number(distanceKm.toFixed(1)),
@@ -37,7 +52,9 @@ export class PricingService {
       baseFare: Number(this.baseFare.toFixed(2)),
       distanceFare: Number(distanceFare.toFixed(2)),
       timeFare: Number(timeFare.toFixed(2)),
-      total: Number((this.baseFare + distanceFare + timeFare).toFixed(2)),
+      surgeMultiplier: market.surgeMultiplier,
+      surgeFare: Number((total - subtotal).toFixed(2)),
+      total: Number(total.toFixed(2)),
     };
   }
 

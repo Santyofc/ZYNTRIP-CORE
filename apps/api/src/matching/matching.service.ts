@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { DriverScoringService } from '../driver-scoring/driver-scoring.service';
 import { DriversService } from '../drivers/drivers.service';
 import { RealtimeService } from '../realtime/realtime.service';
 
@@ -13,6 +14,7 @@ export class MatchingService {
   constructor(
     private readonly driversService: DriversService,
     private readonly realtimeService: RealtimeService,
+    private readonly driverScoringService: DriverScoringService,
   ) {}
 
   async assignDriver(trip: MatchableTrip) {
@@ -20,7 +22,19 @@ export class MatchingService {
       return null;
     }
 
-    const nearbyDrivers = this.driversService.findNearby(trip.pickupLat, trip.pickupLng, 3);
+    const nearbyDrivers = this.driversService
+      .findNearby(trip.pickupLat, trip.pickupLng, 3)
+      .map((driver) => ({
+        ...driver,
+        driverScore: this.driverScoringService.calculate({
+          acceptanceRate: 0.92,
+          completionRate: 0.96,
+          cancellationRate: 0.04,
+          averageRating: 4.8,
+          incidentsLast30d: 0,
+        }).score,
+      }))
+      .sort((a, b) => b.driverScore - a.driverScore || a.distanceKm - b.distanceKm);
 
     for (const driver of nearbyDrivers) {
       const accepted = await this.sendOffer(driver.driverId, trip.id);

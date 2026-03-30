@@ -11,11 +11,14 @@ export class PricingController {
     payload: {
       originLabel: string;
       destinationLabel: string;
+      region?: string;
       originLat?: number;
       originLng?: number;
       destinationLat?: number;
       destinationLng?: number;
       durationMinutes?: number;
+      activeRequests?: number;
+      availableDrivers?: number;
     },
   ) {
     return this.pricingService.estimateFare(payload);

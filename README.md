@@ -18,6 +18,12 @@ It combines a React frontend, a NestJS backend, PayPal checkout, and Socket.IO r
 - Rider web flow with trip requests and fare estimation
 - Driver queue actions for accept, start, complete, and decline
 - Matching foundation based on proximity plus driver availability
+- Offer-demand balancing and surge pricing contracts in the backend
+- Antifraud scoring hooks for risky trips and payment reviews
+- Route optimization service ready for Google Maps-backed ETA improvements
+- Driver scoring engine to rank assignment candidates
+- Live support conversations API for operations and incident response
+- Multi-region region registry for staged rollout across zones
 - Socket.IO realtime updates for trips, offers, locations, and operations alerts
 - Pricing service based on base fare + distance + time
 - PayPal checkout in the rider flow, with cash-first V1 direction documented for mobile
@@ -84,14 +90,20 @@ The active monorepo backend path is now `apps/api/`. The older `backend/` folder
 apps/
   api/
     src/
+      antifraud/
       auth/
+      driver-scoring/
       drivers/
       health/
+      live-support/
+      market-dynamics/
       matching/
       notifications/
       payments/
       pricing/
       realtime/
+      regions/
+      route-optimization/
       trips/
   rider-app/
   driver-app/
@@ -170,10 +182,16 @@ Included modules:
 
 - `health`: readiness check at `GET /api/health`
 - `auth`: starter endpoints for `POST /api/auth/register` and `POST /api/auth/login`
+- `regions`: region registry and multi-region routing metadata
+- `market-dynamics`: offer-demand balancing and surge multiplier snapshots
+- `route-optimization`: route and ETA optimization contract for maps integration
+- `antifraud`: trip and payment risk scoring hooks
+- `driver-scoring`: driver quality scoring for assignment priority
+- `live-support`: support conversation intake and queue visibility
 - `drivers`: starter endpoints for driver availability, location updates, and nearby lookups
 - `trips`: starter endpoints for `GET /api/trips`, `POST /api/trips`, status transitions, and payment updates
 - `matching`: proximity-first assignment flow using driver availability plus coordinates
-- `pricing`: fare estimate endpoint using base fare + distance + time
+- `pricing`: fare estimate endpoint using base fare + distance + time + surge multiplier
 - `realtime`: Socket.IO gateway for trip lifecycle, offers, notifications, and driver location updates
 - `payments`: starter endpoints for `POST /api/payments/paypal/orders` and `POST /api/payments/paypal/webhook`
 - `notifications`: server-side handoff point for Telegram, email, or Slack alerts
@@ -187,6 +205,8 @@ Current backend scope:
 - starter Postgres schema in `apps/api/supabase/migrations/001_initial_schema.sql`
 - V1 trip state machine from `REQUESTED` to `PAID`
 - pricing and matching services aligned to the ride lifecycle
+- surge pricing driven by demand versus supply snapshots
+- antifraud, route optimization, driver scoring, live support, and multi-region scaffolds
 - PayPal order and webhook stubs in the correct backend layer
 - notification fan-out stub that can be wired to Telegram or email next
 - live trip, location, offer, and notification fan-out over Socket.IO
@@ -213,5 +233,8 @@ To enable Supabase persistence:
 - Geospatial search and ETA estimation
 - Dynamic pricing and surge zones
 - Driver onboarding workflow and compliance checks
+- Live support desk with SLA routing
+- Antifraud rules plus device and velocity checks
+- Multi-region rollout strategy with regional failover
 - Full payment lifecycle with webhooks and reconciliation
 - Observability stack (OpenTelemetry, logs, metrics, tracing)

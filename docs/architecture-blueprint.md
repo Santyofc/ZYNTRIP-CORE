@@ -13,6 +13,16 @@ This document defines the target production stack for the next iteration of Zynt
 - Basic admin panel
 - Payments: cash first, Stripe or SINPE next
 
+## Enterprise Capabilities To Carry Forward
+
+- balanceo de oferta y demanda
+- surge pricing
+- antifraude
+- optimizacion de rutas
+- multi-region
+- scoring de conductores
+- soporte en vivo
+
 ## Closed Stack
 
 - Mobile: React Native + Expo
@@ -46,9 +56,15 @@ apps/
     package.json
   api/
     src/
+      antifraud/
       auth/
+      driver-scoring/
       users/
       drivers/
+      live-support/
+      market-dynamics/
+      regions/
+      route-optimization/
       trips/
       dispatch/
       matching/
@@ -141,7 +157,13 @@ docs/
 - `users`: platform users and profiles
 - `drivers`: availability, status, onboarding, compliance
 - `trips`: trip creation, assignment, state machine, receipts
-- `matching`: proximity plus availability assignment
+- `matching`: proximity plus availability assignment with driver scoring
+- `market-dynamics`: offer-demand balancing and surge multipliers by region
+- `route-optimization`: ETA and route scoring ahead of Google Maps integration
+- `antifraud`: velocity checks, payment risk, cash abuse heuristics
+- `driver-scoring`: acceptance, completion, rating, incident-adjusted score
+- `live-support`: chat and incident intake for rider and driver escalations
+- `regions`: multi-region metadata, rollouts, failover routing
 - `payments`: orders, captures, refunds, payouts
 - `notifications`: app, push, email, Telegram hooks
 - `realtime`: Socket.IO gateway and room routing
@@ -182,6 +204,9 @@ docs/
 - driver presence cache
 - temporary geospatial indexing
 - webhook deduplication
+- regional queue isolation
+- surge window snapshots
+- live support routing queues
 
 ## Infra Baseline
 
@@ -219,6 +244,9 @@ docs/
 - Redis geo plus queues
 - Google Maps routing and ETA
 - push notifications
+- surge pricing and demand balancing
+- antifraud scoring
+- live support console
 
 ### Phase 3
 
@@ -231,3 +259,4 @@ docs/
 - Use Supabase first if you want Storage and admin tooling bundled.
 - Use Neon first if you want a lighter managed Postgres focus.
 - Keep critical payment logic server-side only.
+- Keep antifraud rules and driver scoring server-side only.
