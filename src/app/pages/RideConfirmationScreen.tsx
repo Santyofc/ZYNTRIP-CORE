@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ArrowLeft, MapPin, Clock, Users } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Users, Info } from 'lucide-react';
 import { MockMap } from '../components/MockMap';
-import { BottomSheet } from '../components/BottomSheet';
+import { SimpleBottomSheet } from '../components/BottomSheet';
 import { Button } from '../components/Button';
-import { Card } from '../components/Card';
+import { StatusBar } from '../components/StatusBar';
+import { motion } from 'motion/react';
 
 const rideOptions = [
   {
@@ -12,123 +13,162 @@ const rideOptions = [
     name: 'UberX',
     description: 'Affordable, everyday rides',
     eta: '3 min',
-    price: '$12.50',
+    price: 12.50,
+    priceMax: 15.25,
     capacity: 4,
     icon: '🚗',
+    popular: false,
   },
   {
     id: 2,
     name: 'Comfort',
     description: 'Newer cars with extra legroom',
     eta: '5 min',
-    price: '$18.75',
+    price: 18.75,
+    priceMax: 22.50,
     capacity: 4,
-    icon: '🚙',
+    icon: '✨',
+    popular: true,
   },
   {
     id: 3,
     name: 'UberXL',
     description: 'Affordable rides for groups up to 6',
     eta: '8 min',
-    price: '$22.00',
+    price: 22.00,
+    priceMax: 28.00,
     capacity: 6,
     icon: '🚐',
+    popular: false,
+  },
+  {
+    id: 4,
+    name: 'Green',
+    description: 'Eco-friendly rides',
+    eta: '6 min',
+    price: 14.25,
+    priceMax: 17.50,
+    capacity: 4,
+    icon: '🌿',
+    popular: false,
   },
 ];
 
 export function RideConfirmationScreen() {
   const navigate = useNavigate();
-  const [selectedRide, setSelectedRide] = React.useState(rideOptions[0].id);
+  const [selectedRide, setSelectedRide] = useState(rideOptions[1].id);
+  const selectedOption = rideOptions.find(r => r.id === selectedRide);
 
   return (
     <div className="relative h-screen bg-black overflow-hidden">
+      <StatusBar />
+      
       {/* Map with Route */}
       <MockMap showRoute showPickup showDestination />
 
       {/* Top Bar */}
-      <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/80 to-transparent">
+      <div className="absolute top-11 left-0 right-0 z-10 pt-3 px-4">
         <button
           onClick={() => navigate('/destination')}
-          className="p-3 bg-black/60 backdrop-blur-sm rounded-xl border border-gray-800"
+          className="w-11 h-11 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all"
         >
-          <ArrowLeft className="w-6 h-6 text-white" />
+          <ArrowLeft className="w-5 h-5 text-black" />
         </button>
       </div>
 
       {/* Route Info Card */}
-      <div className="absolute top-20 left-4 right-4 z-10">
-        <Card className="bg-black/80 backdrop-blur-sm">
-          <div className="space-y-3">
-            <div className="flex items-start gap-3">
-              <div className="mt-1">
-                <div className="w-3 h-3 bg-[#00FF88] rounded-full" />
-                <div className="w-0.5 h-8 bg-gray-700 mx-auto my-1" />
-                <div className="w-3 h-3 bg-red-500 rounded-full" />
-              </div>
-              <div className="flex-1 space-y-3">
-                <div>
-                  <p className="text-sm text-gray-400">Pickup</p>
-                  <p className="text-white font-semibold">Current Location</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">Destination</p>
-                  <p className="text-white font-semibold">San Francisco Airport</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-[#00FF88] font-semibold">8.5 mi</p>
-                <p className="text-sm text-gray-400">25 min</p>
-              </div>
+      <div className="absolute top-[72px] left-4 right-4 z-10">
+        <div className="bg-white rounded-2xl p-4 shadow-2xl">
+          <div className="flex items-center gap-3">
+            <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
+              <div className="w-2 h-2 bg-[#00FF88] rounded-full" />
+              <div className="w-0.5 h-10 bg-gray-300" />
+              <MapPin className="w-3.5 h-3.5 text-black" fill="black" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[13px] text-gray-600 mb-0.5">Current Location</div>
+              <div className="text-black font-semibold text-[15px] truncate mb-3">123 Market Street</div>
+              <div className="text-[13px] text-gray-600 mb-0.5">San Francisco Airport</div>
+              <div className="text-black font-semibold text-[15px] truncate">Terminal 1, SFO</div>
+            </div>
+            <div className="text-right flex-shrink-0">
+              <div className="text-black font-bold text-[15px]">8.5 mi</div>
+              <div className="text-[13px] text-gray-600">25 min</div>
             </div>
           </div>
-        </Card>
+        </div>
       </div>
 
       {/* Bottom Sheet with Ride Options */}
-      <BottomSheet height="55%">
-        <div className="px-6 pb-8 flex flex-col h-full">
-          <h2 className="text-xl font-bold text-white mb-4">Choose a ride</h2>
+      <SimpleBottomSheet>
+        <div className="px-5 pb-6 pt-3">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[20px] font-bold text-white tracking-tight">Choose a ride</h2>
+            <button className="flex items-center gap-1 text-[#00FF88] text-[14px] font-semibold">
+              <Users className="w-4 h-4" />
+              <span>For me</span>
+            </button>
+          </div>
 
-          <div className="flex-1 overflow-y-auto space-y-3 mb-4">
+          <div className="space-y-2 mb-4 max-h-[280px] overflow-y-auto">
             {rideOptions.map((option) => (
-              <Card
+              <motion.button
                 key={option.id}
                 onClick={() => setSelectedRide(option.id)}
-                className={`transition-all ${
+                className={`w-full text-left transition-all ${
                   selectedRide === option.id
-                    ? 'border-[#00FF88] bg-gray-800'
-                    : 'border-gray-800'
-                }`}
+                    ? 'bg-[#1a1a1a] border-2 border-[#00FF88]'
+                    : 'bg-[#1a1a1a] border-2 border-transparent hover:bg-[#222]'
+                } rounded-2xl p-4 relative`}
+                whileTap={{ scale: 0.98 }}
               >
-                <div className="flex items-center gap-4">
-                  <div className="text-4xl">{option.icon}</div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-white font-semibold">{option.name}</h3>
-                      <div className="flex items-center gap-1 text-xs text-gray-400">
+                {option.popular && (
+                  <div className="absolute -top-2 left-4 bg-[#00FF88] text-black text-[11px] font-bold px-2 py-0.5 rounded-full">
+                    POPULAR
+                  </div>
+                )}
+                <div className="flex items-center gap-3">
+                  <div className="text-4xl flex-shrink-0">{option.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <h3 className="text-white font-bold text-[16px]">{option.name}</h3>
+                      <div className="flex items-center gap-1 text-[12px] text-gray-500">
                         <Users className="w-3 h-3" />
                         <span>{option.capacity}</span>
                       </div>
+                      <div className="flex items-center gap-1 text-[12px] text-gray-500">
+                        <Clock className="w-3 h-3" />
+                        <span>{option.eta}</span>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-400">{option.description}</p>
-                    <div className="flex items-center gap-1 text-sm text-gray-400 mt-1">
-                      <Clock className="w-3 h-3" />
-                      <span>{option.eta}</span>
-                    </div>
+                    <p className="text-[13px] text-gray-500">{option.description}</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-white font-bold text-lg">{option.price}</p>
+                  <div className="text-right flex-shrink-0">
+                    <div className="text-white font-bold text-[17px]">
+                      ${option.price.toFixed(2)}
+                    </div>
+                    <div className="text-[11px] text-gray-600">
+                      ${option.priceMax.toFixed(2)}
+                    </div>
                   </div>
                 </div>
-              </Card>
+              </motion.button>
             ))}
           </div>
 
+          {/* Price estimate disclaimer */}
+          <div className="flex items-start gap-2 mb-4 p-3 bg-[#1a1a1a] rounded-xl border border-gray-800">
+            <Info className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" />
+            <p className="text-[12px] text-gray-500 leading-relaxed">
+              Price may vary based on traffic and demand. You won't be charged until the trip is complete.
+            </p>
+          </div>
+
           <Button onClick={() => navigate('/searching')}>
-            Request {rideOptions.find(r => r.id === selectedRide)?.name}
+            Request {selectedOption?.name}
           </Button>
         </div>
-      </BottomSheet>
+      </SimpleBottomSheet>
     </div>
   );
 }
