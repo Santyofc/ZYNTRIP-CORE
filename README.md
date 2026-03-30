@@ -54,6 +54,8 @@ The target production stack is documented here:
 - [DB Schema v2](docs/db-schema-v2.sql)
 - [Monorepo Migration Plan](docs/monorepo-migration.md)
 
+The active monorepo backend path is now `apps/api/`. The older `backend/` folder is still kept in the repo temporarily as a legacy reference while the migration finishes.
+
 ## Stack
 
 - React 18
@@ -166,7 +168,7 @@ Production hardening still recommended:
 
 ## Backend API
 
-The repo now includes a NestJS backend scaffold in `backend/` so the frontend can move off in-memory mocks without leaving this project structure.
+The repo now includes an active NestJS backend in `apps/api/` so the frontend can move off in-memory mocks without leaving this project structure.
 
 Included modules:
 
@@ -177,13 +179,13 @@ Included modules:
 - `payments`: starter endpoints for `POST /api/payments/paypal/orders` and `POST /api/payments/paypal/webhook`
 - `notifications`: server-side handoff point for Telegram, email, or Slack alerts
 
-Environment variables for the backend live in `backend/.env.example`.
+Environment variables for the active monorepo backend live in `apps/api/.env.example`.
 
 Current backend scope:
 
 - NestJS API shell with validation and CORS
 - Supabase server client with safe in-memory fallback when credentials are missing
-- starter Postgres schema in `backend/supabase/migrations/001_initial_schema.sql`
+- starter Postgres schema in `apps/api/supabase/migrations/001_initial_schema.sql`
 - PayPal order and webhook stubs in the correct backend layer
 - notification fan-out stub that can be wired to Telegram or email next
 - live trip and notification fan-out over Socket.IO for the frontend
@@ -191,8 +193,8 @@ Current backend scope:
 To enable Supabase persistence:
 
 1. Create a Supabase project.
-2. Apply `backend/supabase/migrations/001_initial_schema.sql` in the SQL editor.
-3. Copy `backend/.env.example` to `backend/.env`.
+2. Apply `apps/api/supabase/migrations/001_initial_schema.sql` in the SQL editor.
+3. Copy `apps/api/.env.example` to `apps/api/.env`.
 4. Fill `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
 5. Restart `npm run dev:backend`.
 

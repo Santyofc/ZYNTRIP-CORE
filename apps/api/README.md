@@ -1,15 +1,24 @@
-# Workspace API Scaffold
+# Zyntrip API
 
-This folder is the target home for the production NestJS API once the current `backend/` service is migrated into the monorepo layout.
+`apps/api` is now the active backend path for the monorepo layout.
 
-Current state:
+It contains the migrated NestJS service that powers:
 
-- `backend/` remains the active API used by the current app
-- `apps/api/` is the workspace-ready destination for the next migration step
+- auth
+- trips
+- payments
+- notifications
+- realtime Socket.IO events
+- Supabase-ready persistence
+
+Temporary note:
+
+- `backend/` still exists as a legacy copy for reference during migration
+- new work should target `apps/api/`
 
 Recommended next move:
 
-1. migrate the existing backend modules into `apps/api/src`
-2. move DB code into `packages/db`
-3. move shared types into `packages/types`
-4. switch root scripts to `pnpm` workspace commands
+1. move shared DB logic into `packages/db`
+2. move shared contracts into `packages/types`
+3. point the admin workspace to this API path
+4. retire `backend/` once the migration is complete

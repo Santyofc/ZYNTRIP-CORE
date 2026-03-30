@@ -5,7 +5,7 @@ The repo now has a workspace scaffold under `apps/` and `packages/` without brea
 ## Current Active Paths
 
 - frontend shell: root `src/`
-- active backend: `backend/`
+- active backend: `apps/api/`
 
 ## Target Paths
 
@@ -20,11 +20,12 @@ The repo now has a workspace scaffold under `apps/` and `packages/` without brea
 
 1. move shared TypeScript contracts into `packages/types`
 2. move SQL and Drizzle schema into `packages/db`
-3. migrate NestJS modules from `backend/` into `apps/api/`
+3. keep migrating remaining backend-adjacent assets from `backend/` into `apps/api/`
 4. rebuild the current web shell inside `apps/admin/`
 5. retire root-level frontend once `apps/admin` is live
 
 ## Notes
 
-- `backend/` remains the current API so development is not blocked
-- the new workspace gives you a clean place to grow without doing a risky big-bang rewrite
+- `apps/api/` is now the active backend path used by the root scripts
+- `backend/` remains as a legacy mirror until the migration is fully complete
+- the workspace layout lets the repo evolve without a destructive big-bang rewrite

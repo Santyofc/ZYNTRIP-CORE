@@ -7,13 +7,15 @@
   "scripts": {
     "dev": "vite",
     "dev:frontend": "vite",
-    "dev:backend": "npm --prefix backend run start:dev",
+    "dev:backend": "cd apps/api && npm run start:dev",
+    "dev:legacy-backend": "cd backend && npm run start:dev",
     "dev:admin:workspace": "pnpm --filter @zyntrip/admin dev",
     "dev:mobile:workspace": "pnpm --filter @zyntrip/mobile start",
     "dev:api:workspace": "pnpm --filter @zyntrip/api start:dev",
     "build": "vite build",
     "build:frontend": "vite build",
-    "build:backend": "npm --prefix backend run build",
+    "build:backend": "cd apps/api && npm run build",
+    "build:legacy-backend": "cd backend && npm run build",
     "build:workspaces": "pnpm turbo run build",
     "preview": "vite preview"
   },
