@@ -1,49 +1,49 @@
 import { createBrowserRouter } from 'react-router';
-import Landing from './pages/Landing';
-import PassengerRegister from './pages/PassengerRegister';
-import DriverRegister from './pages/DriverRegister';
-import DriverVerification from './pages/DriverVerification';
-import PassengerHome from './pages/PassengerHome';
-import DriverHome from './pages/DriverHome';
-import TripView from './pages/TripView';
-import Payment from './pages/Payment';
-import Rating from './pages/Rating';
+import { HomeScreen } from './pages/HomeScreen';
+import { DestinationScreen } from './pages/DestinationScreen';
+import { RideConfirmationScreen } from './pages/RideConfirmationScreen';
+import { SearchingDriverScreen } from './pages/SearchingDriverScreen';
+import { DriverAssignedScreen } from './pages/DriverAssignedScreen';
+import { LiveTrackingScreen } from './pages/LiveTrackingScreen';
+import { PaymentScreen } from './pages/PaymentScreen';
+import { RatingScreen } from './pages/RatingScreen';
+import { NotFound } from './pages/NotFound';
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    Component: Landing,
+    Component: HomeScreen,
   },
   {
-    path: '/passenger/register',
-    Component: PassengerRegister,
+    path: '/destination',
+    Component: DestinationScreen,
   },
   {
-    path: '/passenger/home',
-    Component: PassengerHome,
+    path: '/ride-confirmation',
+    Component: RideConfirmationScreen,
   },
   {
-    path: '/driver/register',
-    Component: DriverRegister,
+    path: '/searching',
+    Component: SearchingDriverScreen,
   },
   {
-    path: '/driver/verification',
-    Component: DriverVerification,
+    path: '/driver-assigned',
+    Component: DriverAssignedScreen,
   },
   {
-    path: '/driver/home',
-    Component: DriverHome,
-  },
-  {
-    path: '/trip',
-    Component: TripView,
+    path: '/live-tracking',
+    Component: LiveTrackingScreen,
   },
   {
     path: '/payment',
-    Component: Payment,
+    Component: PaymentScreen,
   },
   {
     path: '/rating',
-    Component: Rating,
+    Component: RatingScreen,
+  },
+  {
+    path: '*',
+    Component: NotFound,
   },
 ]);
