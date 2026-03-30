@@ -44,6 +44,15 @@ The goal is to ship an opinionated, production-minded base that can grow into a 
 
 Local captures from the current build showing the rider flow, dispatch view, and payments console.
 
+## Next Architecture
+
+The current repo already runs the web platform shell, backend scaffold, PayPal flow, and realtime notifications.
+
+The target production stack is documented here:
+
+- [Architecture Blueprint](docs/architecture-blueprint.md)
+- [DB Schema v2](docs/db-schema-v2.sql)
+
 ## Stack
 
 - React 18
