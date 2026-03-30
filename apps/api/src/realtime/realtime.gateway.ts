@@ -51,11 +51,15 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
       return;
     }
 
-    return this.driversService.updateLocation(
+    const location = this.driversService.updateLocation(
       payload.driverId,
       payload.lat,
       payload.lng,
       payload.availability ?? 'ONLINE',
     );
+
+    this.server.emit('driver.location.updated', location);
+    this.server.to(`driver:${payload.driverId}`).emit('driver.location.updated', location);
+    return location;
   }
 }

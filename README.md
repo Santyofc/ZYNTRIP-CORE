@@ -15,12 +15,14 @@ It combines a React frontend, a NestJS backend, PayPal checkout, and Socket.IO r
 
 ## What Works Today
 
-- Rider trip requests with fare estimation
+- Rider web flow with trip requests and fare estimation
 - Driver queue actions for accept, start, complete, and decline
-- Dispatch and trip timeline views
-- PayPal checkout in the rider flow
+- Matching foundation based on proximity plus driver availability
+- Socket.IO realtime updates for trips, offers, locations, and operations alerts
+- Pricing service based on base fare + distance + time
+- PayPal checkout in the rider flow, with cash-first V1 direction documented for mobile
 - In-app and browser payment notifications
-- Socket.IO realtime updates for trips and operations alerts
+- Expo rider and driver app shells shaped around the V1 lifecycle
 - Supabase-ready backend persistence with in-memory fallback for local development
 
 ## Why This Repo Exists
@@ -58,12 +60,14 @@ The active monorepo backend path is now `apps/api/`. The older `backend/` folder
 
 ## Stack
 
-- React 18
-- TypeScript
-- Vite 6
-- React Router DOM
-- Socket.IO client
-- CSS tokens with modular feature architecture
+- Rider app: React Native + Expo
+- Driver app: React Native + Expo
+- Web admin shell: React 18 + TypeScript + Vite 6
+- API: NestJS
+- Realtime: Socket.IO
+- Persistence: Supabase/Postgres-ready
+- Maps: react-native-maps placeholders ready for Google Maps integration
+- Payments: PayPal today, cash-first V1 path, Stripe/SINPE next
 
 ## Product Modules
 
@@ -77,37 +81,29 @@ The active monorepo backend path is now `apps/api/`. The older `backend/` folder
 ## Project Structure
 
 ```text
+apps/
+  api/
+    src/
+      auth/
+      drivers/
+      health/
+      matching/
+      notifications/
+      payments/
+      pricing/
+      realtime/
+      trips/
+  rider-app/
+  driver-app/
+  admin/
 backend/
-  src/
-    auth/
-    health/
-    notifications/
-    payments/
-    realtime/
-    trips/
-    app.module.ts
-    main.ts
+  legacy mirror kept during migration
 src/
-  app/
-    providers/
-    App.tsx
-    router.tsx
-  components/
-    layout/
-    ui/
-  features/
-    auth/
-    riders/
-    drivers/
-    trips/
-    dispatch/
-    payments/
-    admin/
-  services/
-  hooks/
-  lib/
-  assets/
-  styles/
+  current web platform shell at the repo root
+packages/
+  config/
+  db/
+  types/
 ```
 
 ## Getting Started
@@ -174,8 +170,11 @@ Included modules:
 
 - `health`: readiness check at `GET /api/health`
 - `auth`: starter endpoints for `POST /api/auth/register` and `POST /api/auth/login`
-- `trips`: starter endpoints for `GET /api/trips`, `POST /api/trips`, and `PATCH /api/trips/:tripId/payment/paid`
-- `realtime`: Socket.IO gateway for `trip.created`, `trip.updated`, and `notification.created`
+- `drivers`: starter endpoints for driver availability, location updates, and nearby lookups
+- `trips`: starter endpoints for `GET /api/trips`, `POST /api/trips`, status transitions, and payment updates
+- `matching`: proximity-first assignment flow using driver availability plus coordinates
+- `pricing`: fare estimate endpoint using base fare + distance + time
+- `realtime`: Socket.IO gateway for trip lifecycle, offers, notifications, and driver location updates
 - `payments`: starter endpoints for `POST /api/payments/paypal/orders` and `POST /api/payments/paypal/webhook`
 - `notifications`: server-side handoff point for Telegram, email, or Slack alerts
 
@@ -186,9 +185,11 @@ Current backend scope:
 - NestJS API shell with validation and CORS
 - Supabase server client with safe in-memory fallback when credentials are missing
 - starter Postgres schema in `apps/api/supabase/migrations/001_initial_schema.sql`
+- V1 trip state machine from `REQUESTED` to `PAID`
+- pricing and matching services aligned to the ride lifecycle
 - PayPal order and webhook stubs in the correct backend layer
 - notification fan-out stub that can be wired to Telegram or email next
-- live trip and notification fan-out over Socket.IO for the frontend
+- live trip, location, offer, and notification fan-out over Socket.IO
 
 To enable Supabase persistence:
 

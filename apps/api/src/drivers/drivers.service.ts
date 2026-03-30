@@ -14,6 +14,10 @@ export interface DriverLocation {
 export class DriversService {
   private readonly locations = new Map<string, DriverLocation>();
 
+  findAll() {
+    return [...this.locations.values()].sort((a, b) => a.driverId.localeCompare(b.driverId));
+  }
+
   updateLocation(driverId: string, lat: number, lng: number, availability: DriverAvailability = 'ONLINE') {
     const location: DriverLocation = {
       driverId,

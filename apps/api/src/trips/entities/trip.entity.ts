@@ -11,6 +11,8 @@ export interface TripEntity {
   destinationLat?: number;
   destinationLng?: number;
   fareEstimate: number;
+  distanceKm?: number;
+  durationMinutes?: number;
   requestedAt: string;
   status: TripStatus;
   paymentStatus: PaymentStatus;

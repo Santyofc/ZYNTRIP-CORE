@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { MatchingService } from '../matching/matching.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { PricingService } from '../pricing/pricing.service';
 import { RealtimeService } from '../realtime/realtime.service';
 import { SupabaseService } from '../supabase/supabase.service';
 import type { Database } from '../supabase/supabase.types';
@@ -15,6 +16,7 @@ export class TripsService {
     private readonly realtimeService: RealtimeService,
     private readonly notificationsService: NotificationsService,
     private readonly matchingService: MatchingService,
+    private readonly pricingService: PricingService,
   ) {}
 
   private readonly trips: TripEntity[] = [
@@ -50,6 +52,16 @@ export class TripsService {
   }
 
   async create(payload: CreateTripDto) {
+    const fareEstimate = this.pricingService.estimateFare({
+      originLabel: payload.pickup,
+      destinationLabel: payload.destination,
+      originLat: payload.pickupLat,
+      originLng: payload.pickupLng,
+      destinationLat: payload.destinationLat,
+      destinationLng: payload.destinationLng,
+      durationMinutes: payload.durationMinutes,
+    });
+
     const trip: TripEntity = {
       id: crypto.randomUUID(),
       riderName: payload.riderName,
@@ -59,7 +71,9 @@ export class TripsService {
       pickupLng: payload.pickupLng,
       destinationLat: payload.destinationLat,
       destinationLng: payload.destinationLng,
-      fareEstimate: this.calculateFareEstimate(payload.pickup, payload.destination),
+      fareEstimate: fareEstimate.total,
+      distanceKm: fareEstimate.distanceKm,
+      durationMinutes: fareEstimate.durationMinutes,
       requestedAt: new Date().toISOString(),
       status: 'requested',
       paymentStatus: 'pending',
@@ -211,11 +225,6 @@ export class TripsService {
     return this.updateStatus(tripId, toLegacyTripStatus(nextStatus), driverId);
   }
 
-  private calculateFareEstimate(pickup: string, destination: string) {
-    const distanceSignal = Math.max(pickup.length + destination.length, 8);
-    return Number((distanceSignal * 0.55).toFixed(2));
-  }
-
   private async tryAutoAssignDriver(trip: TripEntity) {
     const assignedDriverId = await this.matchingService.assignDriver({
       id: trip.id,
@@ -273,6 +282,8 @@ export class TripsService {
       destinationLat: undefined,
       destinationLng: undefined,
       fareEstimate: Number(row.fare_estimate),
+      distanceKm: undefined,
+      durationMinutes: undefined,
       requestedAt: row.requested_at,
       status: row.status,
       paymentStatus: row.payment_status,

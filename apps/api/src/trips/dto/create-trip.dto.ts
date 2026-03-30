@@ -25,4 +25,8 @@ export class CreateTripDto {
   @IsOptional()
   @IsNumber()
   destinationLng?: number;
+
+  @IsOptional()
+  @IsNumber()
+  durationMinutes?: number;
 }
