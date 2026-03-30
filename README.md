@@ -1,8 +1,29 @@
 # Zyntrip Core
 
-Zyntrip Core is a ride-hailing platform built in public for operators, riders, drivers, and finance teams.
+Zyntrip Core is a full-stack ride operations platform built in public for riders, drivers, dispatch teams, and finance operators.
 
-It is designed as a practical full-stack product: a React frontend for daily operations, a NestJS backend for business logic, and Supabase-ready persistence for realtime trips, payments, and notifications.
+It combines a React frontend, a NestJS backend, PayPal checkout, and Socket.IO realtime flows so the product can move beyond static dashboards into live trip and payment operations.
+
+## What Works Today
+
+- Rider trip requests with fare estimation
+- Driver queue actions for accept, start, complete, and decline
+- Dispatch and trip timeline views
+- PayPal checkout in the rider flow
+- In-app and browser payment notifications
+- Socket.IO realtime updates for trips and operations alerts
+- Supabase-ready backend persistence with in-memory fallback for local development
+
+## Why This Repo Exists
+
+This repository is the product core for a modern mobility stack:
+
+- frontend for daily operations
+- backend for business logic and payments
+- realtime transport for live status changes
+- persistence layer ready for Supabase/Postgres
+
+The goal is to ship an opinionated, production-minded base that can grow into a serious transportation or field-operations platform.
 
 ## Stack
 
